@@ -1,66 +1,63 @@
 package com.example.recommendor.user;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.example.recommendor.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ViewUserInfoFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ViewUserInfoFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private String userId;
+    private FirebaseFirestore db;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ViewUserInfoFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ViewUserInfoFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ViewUserInfoFragment newInstance(String param1, String param2) {
-        ViewUserInfoFragment fragment = new ViewUserInfoFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_view_user_info, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        db = FirebaseFirestore.getInstance();
+        userId = requireArguments().getString("userId");
+        if (userId == null) {
+            Log.e("ViewUserInfoFragment", "userId is null. Cannot fetch user info.");
+            Toast.makeText(requireContext(), "User ID is missing!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        TextView userInfoTextView = view.findViewById(R.id.tvUserInfo);
+
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        String userInfo = "Username: " + snapshot.getString("username") + "\n" +
+                                "First Name: " + snapshot.getString("firstName") + "\n" +
+                                "Last Name: " + snapshot.getString("lastName") + "\n" +
+                                "Email: " + snapshot.getString("email") + "\n" +
+                                "Date of Birth: " + snapshot.getString("dateOfBirth");
+                        userInfoTextView.setText(userInfo);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("ViewUserInfo", "Failed to fetch user info", e));
+
+        view.findViewById(R.id.btnGoBack).setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("userId", userId);
+            Navigation.findNavController(view).navigate(R.id.action_ViewUserInfoFragment_to_adminUserActionsFragment, bundle);
+        });
     }
 }

@@ -1,66 +1,78 @@
 package com.example.recommendor.admin;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.example.recommendor.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AdminUserActionsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AdminUserActionsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private String userId;
+    private FirebaseFirestore db;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public AdminUserActionsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AdminUserActionsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AdminUserActionsFragment newInstance(String param1, String param2) {
-        AdminUserActionsFragment fragment = new AdminUserActionsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_admin_user_actions, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        db = FirebaseFirestore.getInstance();
+        userId = requireArguments().getString("userId");
+        if (userId == null) {
+            Log.e("AdminUserActionsFragment", "userId is null. Cannot proceed.");
+            return;
+        }
+        Log.d("AdminUserActionsFragment", "Navigated with userId: " + userId);
+
+        setupButtons(view);
+    }
+
+    private void setupButtons(View view) {
+        view.findViewById(R.id.btnEditDetails).setOnClickListener(v -> navigateToEditDetails(v));
+        view.findViewById(R.id.btnViewUserInfo).setOnClickListener(v -> navigateToViewUserInfo(v));
+        view.findViewById(R.id.btnDeleteUser).setOnClickListener(v -> deleteUser(view));
+        view.findViewById(R.id.btnGoBack).setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            Navigation.findNavController(view).navigate(R.id.action_adminUserActionsFragment_to_adminFragment, bundle);
+        });
+    }
+
+    private void navigateToEditDetails(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString("userId", userId);
+        Navigation.findNavController(view).navigate(R.id.action_adminUserActionsFragment_to_userDetailsFragment, bundle);
+    }
+
+    private void navigateToViewUserInfo(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString("userId", userId);
+        Navigation.findNavController(view).navigate(R.id.action_adminUserActionsFragment_to_viewUserInfoFragment, bundle);
+    }
+
+    private void deleteUser(View view) {
+        db.collection("users").document(userId)
+                .delete()
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(requireContext(), "User deleted successfully!", Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(view).navigate(R.id.action_adminUserActionsFragment_to_adminFragment);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("AdminUserActionsFragment", "Failed to delete user.", e);
+                    Toast.makeText(requireContext(), "Failed to delete user.", Toast.LENGTH_SHORT).show();
+                });
     }
 }

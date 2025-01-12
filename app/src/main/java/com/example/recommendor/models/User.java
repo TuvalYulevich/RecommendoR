@@ -9,8 +9,7 @@ public class User {
     private String dateOfBirth;
 
     // Required empty constructor
-    public User() {
-    }
+    public User() {}
 
     public String getId() {
         return id;
@@ -58,5 +57,10 @@ public class User {
 
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    // Utility method for getting the full name
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 }

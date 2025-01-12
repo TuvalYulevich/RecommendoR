@@ -17,6 +17,15 @@
         android:visibility="gone"
         android:layout_marginBottom="16dp" />
 
+    <TextView
+        android:id="@+id/tvUserCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Registered Users: 0"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
     <!-- RecyclerView for the users list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userRecyclerView"
@@ -27,9 +36,9 @@
 
     <!-- A Go Back button at the bottom -->
     <Button
-        android:id="@+id/btnGoBack"
+        android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Go Back" />
+        android:text="Log Out" />
 </LinearLayout>

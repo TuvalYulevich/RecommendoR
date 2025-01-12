@@ -1,10 +1,13 @@
 package com.example.recommendor.adapters;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.recommendor.R;
 import com.example.recommendor.models.User;
@@ -50,3 +53,4 @@ public class UserAdapter extends FirestoreRecyclerAdapter<User, UserAdapter.User
         void onUserClick(User user);
     }
 }
+

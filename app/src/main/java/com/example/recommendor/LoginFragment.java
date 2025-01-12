@@ -1,7 +1,8 @@
-package com.example.recommendor.user;
+package com.example.recommendor;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import com.example.recommendor.R;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginFragment extends Fragment {
@@ -28,7 +29,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.d("FragmentLifecycle", "Fragment loaded: " + this.getClass().getSimpleName());
         auth = FirebaseAuth.getInstance();
 
         EditText emailInput = view.findViewById(R.id.inputEmail);
@@ -56,6 +57,10 @@ public class LoginFragment extends Fragment {
                             }
                         });
             }
+        });
+        view.findViewById(R.id.btnGoBack).setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(view);
+            navController.navigateUp();
         });
     }
 }
