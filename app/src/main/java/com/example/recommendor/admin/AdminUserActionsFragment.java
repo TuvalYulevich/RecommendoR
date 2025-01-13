@@ -6,73 +6,75 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
 import com.example.recommendor.R;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.recommendor.databinding.FragmentAdminUserActionsBinding; // Import the binding class
+import com.example.recommendor.repositories.UserRepository;
+import com.example.recommendor.viewmodels.UserViewModel;
 
 public class AdminUserActionsFragment extends Fragment {
 
     private String userId;
-    private FirebaseFirestore db;
+    private UserRepository userRepository; // Declare the UserRepository instance
+    private FragmentAdminUserActionsBinding binding; // Declare the binding instance
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_admin_user_actions, container, false);
+        // Inflate the layout using View Binding
+        binding = FragmentAdminUserActionsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        db = FirebaseFirestore.getInstance();
-        userId = requireArguments().getString("userId");
+        AdminUserActionsFragmentArgs args = AdminUserActionsFragmentArgs.fromBundle(getArguments());
+        userId = args.getUserId();
+
         if (userId == null) {
             Log.e("AdminUserActionsFragment", "userId is null. Cannot proceed.");
             return;
         }
         Log.d("AdminUserActionsFragment", "Navigated with userId: " + userId);
 
-        setupButtons(view);
+        setupButtons();
     }
 
-    private void setupButtons(View view) {
-        view.findViewById(R.id.btnEditDetails).setOnClickListener(v -> navigateToEditDetails(v));
-        view.findViewById(R.id.btnViewUserInfo).setOnClickListener(v -> navigateToViewUserInfo(v));
-        view.findViewById(R.id.btnDeleteUser).setOnClickListener(v -> deleteUser(view));
-        view.findViewById(R.id.btnGoBack).setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            Navigation.findNavController(view).navigate(R.id.action_adminUserActionsFragment_to_adminFragment, bundle);
+    private void setupButtons() {
+        // View User Information
+        binding.btnViewUserInfo.setOnClickListener(v -> {
+            AdminUserActionsFragmentDirections.ActionAdminUserActionsFragmentToViewUserInfoFragment action =
+                    AdminUserActionsFragmentDirections.actionAdminUserActionsFragmentToViewUserInfoFragment(userId);
+            Navigation.findNavController(binding.getRoot()).navigate(action);
+        });
+        // Edit Personal Details
+        binding.btnEditDetails.setOnClickListener(v -> {
+            AdminUserActionsFragmentDirections.ActionAdminUserActionsFragmentToUserDetailsFragment action =
+                    AdminUserActionsFragmentDirections.actionAdminUserActionsFragmentToUserDetailsFragment(userId);
+            Navigation.findNavController(binding.getRoot()).navigate(action);
+        });
+        // Delete User
+        binding.btnDeleteUser.setOnClickListener(v -> {
+            UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+            userViewModel.deleteUser(userId);
+            Toast.makeText(requireContext(), "User deleted successfully!", Toast.LENGTH_SHORT).show();
+            Navigation.findNavController(binding.getRoot()).navigate(R.id.action_adminUserActionsFragment_to_adminFragment);
+        });
+        // Go Back
+        binding.btnGoBack.setOnClickListener(v -> {
+            Navigation.findNavController(binding.getRoot()).navigate(R.id.action_adminUserActionsFragment_to_adminFragment);
         });
     }
 
-    private void navigateToEditDetails(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putString("userId", userId);
-        Navigation.findNavController(view).navigate(R.id.action_adminUserActionsFragment_to_userDetailsFragment, bundle);
-    }
-
-    private void navigateToViewUserInfo(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putString("userId", userId);
-        Navigation.findNavController(view).navigate(R.id.action_adminUserActionsFragment_to_viewUserInfoFragment, bundle);
-    }
-
-    private void deleteUser(View view) {
-        db.collection("users").document(userId)
-                .delete()
-                .addOnSuccessListener(unused -> {
-                    Toast.makeText(requireContext(), "User deleted successfully!", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(view).navigate(R.id.action_adminUserActionsFragment_to_adminFragment);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("AdminUserActionsFragment", "Failed to delete user.", e);
-                    Toast.makeText(requireContext(), "Failed to delete user.", Toast.LENGTH_SHORT).show();
-                });
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // Prevent memory leaks
     }
 }

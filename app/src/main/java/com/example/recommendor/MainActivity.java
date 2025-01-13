@@ -6,22 +6,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-import androidx.fragment.app.FragmentContainerView;
+import com.example.recommendor.databinding.ActivityMainBinding; // Import the binding class
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
+    // Declare a binding instance
+    private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        // Debugging: Check if the FragmentContainerView exists
-        FragmentContainerView container = findViewById(R.id.nav_host_fragment);
-        if (container == null) {
+        // Inflate the layout using View Binding
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Debugging: Check if the FragmentContainerView exists via the binding instance
+        if (binding.navHostFragment == null) {
             Log.e(TAG, "FragmentContainerView (R.id.nav_host_fragment) is null. Check your activity_main.xml");
         } else {
-            Log.d(TAG, "FragmentContainerView initialized successfully.");
+            Log.d(TAG, "FragmentContainerView initialized successfully via View Binding.");
         }
 
         try {

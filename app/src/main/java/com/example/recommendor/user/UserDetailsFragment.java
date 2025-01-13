@@ -5,76 +5,91 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
 import com.example.recommendor.R;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.recommendor.admin.AdminUserActionsFragmentArgs;
+import com.example.recommendor.databinding.FragmentUserDetailsBinding;
+import com.example.recommendor.models.UserModel;
+import com.example.recommendor.repositories.UserRepository;
+import com.example.recommendor.viewmodels.UserViewModel;
 
 public class UserDetailsFragment extends Fragment {
 
     private String userId;
-    private FirebaseFirestore db;
+    private UserRepository userRepository;
+    private FragmentUserDetailsBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_details, container, false);
+        binding = FragmentUserDetailsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        db = FirebaseFirestore.getInstance();
-        userId = requireArguments().getString("userId");
+        userRepository = new UserRepository();
+        UserDetailsFragmentArgs args = UserDetailsFragmentArgs.fromBundle(getArguments());
+        userId = args.getUserId();
+
         if (userId == null) {
             Log.e("UserDetailsFragment", "userId is null. Cannot fetch user details.");
             return;
         }
 
-        EditText etFirstName = view.findViewById(R.id.etFirstName);
-        EditText etLastName = view.findViewById(R.id.etLastName);
-        EditText etUsername = view.findViewById(R.id.etUsername);
-        EditText etEmail = view.findViewById(R.id.etEmail);
-        EditText etDateOfBirth = view.findViewById(R.id.etDateOfBirth);
-
-        db.collection("users").document(userId).get()
-                .addOnSuccessListener(snapshot -> {
-                    if (snapshot.exists()) {
-                        etFirstName.setText(snapshot.getString("firstName"));
-                        etLastName.setText(snapshot.getString("lastName"));
-                        etUsername.setText(snapshot.getString("username"));
-                        etEmail.setText(snapshot.getString("email"));
-                        etDateOfBirth.setText(snapshot.getString("dateOfBirth"));
-                    }
-                });
-
-        view.findViewById(R.id.btnSave).setOnClickListener(v -> {
-            db.collection("users").document(userId).update(
-                            "firstName", etFirstName.getText().toString(),
-                            "lastName", etLastName.getText().toString(),
-                            "username", etUsername.getText().toString(),
-                            "email", etEmail.getText().toString(),
-                            "dateOfBirth", etDateOfBirth.getText().toString())
-                    .addOnSuccessListener(unused -> {
-                        Toast.makeText(requireContext(), "User updated successfully.", Toast.LENGTH_SHORT).show();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("userId", userId);
-                        Navigation.findNavController(view).navigate(R.id.action_userDetailsFragment_to_adminUserActionsFragment, bundle);
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(requireContext(), "Failed to update user.", Toast.LENGTH_SHORT).show());
+        // Use LiveData to observe user data
+        UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userViewModel.getUserById(userId).observe(getViewLifecycleOwner(), user -> {
+            if (user != null) {
+                binding.etFirstName.setText(user.getFirstName());
+                binding.etLastName.setText(user.getLastName());
+                binding.etUsername.setText(user.getUsername());
+                binding.etEmail.setText(user.getEmail());
+                binding.etDateOfBirth.setText(user.getDateOfBirth());
+            } else {
+                Log.e("UserDetailsFragment", "Failed to fetch user details.");
+            }
         });
 
-        view.findViewById(R.id.btnGoBack).setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putString("userId", userId);
-            Navigation.findNavController(view).navigate(R.id.action_userDetailsFragment_to_adminUserActionsFragment, bundle);
+        binding.btnSave.setOnClickListener(v -> {
+            UserModel updatedUser = new UserModel();
+            updatedUser.setId(userId); // Ensure ID is set
+            updatedUser.setFirstName(binding.etFirstName.getText().toString());
+            updatedUser.setLastName(binding.etLastName.getText().toString());
+            updatedUser.setUsername(binding.etUsername.getText().toString());
+            updatedUser.setEmail(binding.etEmail.getText().toString());
+            updatedUser.setDateOfBirth(binding.etDateOfBirth.getText().toString());
+
+            userRepository.updateUser(userId, updatedUser, task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(requireContext(), "User updated successfully.", Toast.LENGTH_SHORT).show();
+                    UserDetailsFragmentDirections.ActionUserDetailsFragmentToAdminUserActionsFragment action =
+                            UserDetailsFragmentDirections.actionUserDetailsFragmentToAdminUserActionsFragment(userId);
+                    Navigation.findNavController(view).navigate(action);
+                } else {
+                    Toast.makeText(requireContext(), "Failed to update user.", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
+
+        binding.btnGoBack.setOnClickListener(v -> {
+            UserDetailsFragmentDirections.ActionUserDetailsFragmentToAdminUserActionsFragment action =
+                    UserDetailsFragmentDirections.actionUserDetailsFragmentToAdminUserActionsFragment(userId);
+            Navigation.findNavController(view).navigate(action);
+        });
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -1,56 +1,65 @@
 package com.example.recommendor.adapters;
 
-import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.recommendor.R;
-import com.example.recommendor.models.User;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class UserAdapter extends FirestoreRecyclerAdapter<User, UserAdapter.UserViewHolder> {
+import com.example.recommendor.databinding.UserItemBinding;
+import com.example.recommendor.models.UserModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+
+    private List<UserModel> users;
     private final OnUserClickListener listener;
 
-    public UserAdapter(@NonNull FirestoreRecyclerOptions<User> options, OnUserClickListener listener) {
-        super(options);
+    public UserAdapter(List<UserModel> users, OnUserClickListener listener) {
+        this.users = users != null ? users : new ArrayList<>();
         this.listener = listener;
-    }
-
-    @Override
-    protected void onBindViewHolder(@NonNull UserViewHolder holder, int position, @NonNull User user) {
-        String documentId = getSnapshots().getSnapshot(position).getId();
-        user.setId(documentId); // Assign the Firestore document ID
-        holder.usernameTextView.setText(user.getUsername());
-        holder.fullNameTextView.setText(user.getFirstName() + " " + user.getLastName());
-        holder.itemView.setOnClickListener(v -> listener.onUserClick(user));
     }
 
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_item, parent, false);
-        return new UserViewHolder(view);
+        UserItemBinding binding = UserItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new UserViewHolder(binding);
     }
 
-    static class UserViewHolder extends RecyclerView.ViewHolder {
-        TextView usernameTextView, fullNameTextView;
+    @Override
+    public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
+        UserModel user = users.get(position);
 
-        public UserViewHolder(@NonNull View itemView) {
-            super(itemView);
-            usernameTextView = itemView.findViewById(R.id.tvUsername);
-            fullNameTextView = itemView.findViewById(R.id.tvFullName);
+        // Bind data to views
+        holder.binding.tvUsername.setText(user.getUsername());
+        holder.binding.tvFullName.setText(user.getFullName());
+
+        holder.binding.getRoot().setOnClickListener(v -> listener.onUserClick(user));
+    }
+
+    @Override
+    public int getItemCount() {
+        return users.size();
+    }
+
+    public void setUsers(List<UserModel> newUsers) {
+        this.users = newUsers != null ? newUsers : new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+    public static class UserViewHolder extends RecyclerView.ViewHolder {
+        final UserItemBinding binding;
+
+        public UserViewHolder(@NonNull UserItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
     public interface OnUserClickListener {
-        void onUserClick(User user);
+        void onUserClick(UserModel user);
     }
 }
-
