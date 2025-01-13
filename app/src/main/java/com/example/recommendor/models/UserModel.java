@@ -1,6 +1,6 @@
 package com.example.recommendor.models;
 
-public class User {
+public class UserModel {
     private String id; // Firestore document ID
     private String firstName;
     private String lastName;
@@ -9,7 +9,7 @@ public class User {
     private String dateOfBirth;
 
     // Required empty constructor
-    public User() {}
+    public UserModel() {}
 
     public String getId() {
         return id;

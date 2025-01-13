@@ -6,56 +6,59 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
+import com.example.recommendor.databinding.FragmentRegisterBinding;
+import com.example.recommendor.models.UserModel;
+import com.example.recommendor.repositories.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RegisterFragment extends Fragment {
 
     private FirebaseAuth auth;
-    private FirebaseFirestore db;
+    private UserRepository userRepository; // Declare a UserRepository instance
+    private FragmentRegisterBinding binding; // Declare a binding instance
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_register, container, false);
+        // Inflate the layout using View Binding
+        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d("FragmentLifecycle", "Fragment loaded: " + this.getClass().getSimpleName());
+
+        // Initialize FirebaseAuth and UserRepository
         auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        userRepository = new UserRepository();
 
-        view.findViewById(R.id.btnRegister).setOnClickListener(v -> {
-            EditText firstNameInput = view.findViewById(R.id.inputFirstName);
-            EditText lastNameInput = view.findViewById(R.id.inputLastName);
-            EditText usernameInput = view.findViewById(R.id.inputUsername);
-            EditText emailInput = view.findViewById(R.id.inputEmail);
-            EditText passwordInput = view.findViewById(R.id.inputPassword);
+        // Set up button click listeners
+        binding.btnRegister.setOnClickListener(v -> {
+            String firstName = binding.inputFirstName.getText().toString();
+            String lastName = binding.inputLastName.getText().toString();
+            String username = binding.inputUsername.getText().toString();
+            String email = binding.inputEmail.getText().toString();
+            String password = binding.inputPassword.getText().toString();
 
-            String firstName = firstNameInput.getText().toString();
-            String lastName = lastNameInput.getText().toString();
-            String username = usernameInput.getText().toString();
-            String email = emailInput.getText().toString();
-            String password = passwordInput.getText().toString();
-
+            // Validate inputs
             if (TextUtils.isEmpty(firstName) || TextUtils.isEmpty(lastName) || TextUtils.isEmpty(username)
                     || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            // Create a new user with Firebase Authentication
             auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -63,27 +66,38 @@ public class RegisterFragment extends Fragment {
                             if (firebaseUser != null) {
                                 String userId = firebaseUser.getUid();
 
-                                Map<String, Object> userDetails = new HashMap<>();
-                                userDetails.put("firstName", firstName);
-                                userDetails.put("lastName", lastName);
-                                userDetails.put("username", username);
-                                userDetails.put("email", email);
+                                // Create a User object and save using UserRepository
+                                UserModel newUser = new UserModel();
+                                newUser.setId(userId);
+                                newUser.setFirstName(firstName);
+                                newUser.setLastName(lastName);
+                                newUser.setUsername(username);
+                                newUser.setEmail(email);
 
-                                db.collection("users").document(userId).set(userDetails)
-                                        .addOnSuccessListener(aVoid -> {
-                                            NavController navController = Navigation.findNavController(view);
-                                            navController.navigate(R.id.action_registerFragment_to_welcomeFragment);
-                                        })
-                                        .addOnFailureListener(e -> Toast.makeText(requireContext(), "Error saving user info", Toast.LENGTH_SHORT).show());
+                                userRepository.updateUser(userId, newUser, updateTask -> {
+                                    if (updateTask.isSuccessful()) {
+                                        NavController navController = Navigation.findNavController(view);
+                                        navController.navigate(R.id.action_registerFragment_to_welcomeFragment);
+                                    } else {
+                                        Toast.makeText(requireContext(), "Error saving user info.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         } else {
                             Toast.makeText(requireContext(), "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         });
-        view.findViewById(R.id.btnGoBack).setOnClickListener(v -> {
+
+        binding.btnGoBack.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(view);
             navController.navigateUp();
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // Prevent memory leaks
     }
 }

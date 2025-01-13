@@ -6,39 +6,44 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.recommendor.databinding.FragmentLoginBinding; // Import the binding class
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginFragment extends Fragment {
 
     private FirebaseAuth auth;
+    private FragmentLoginBinding binding; // Declare the binding instance
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        // Inflate the layout using View Binding
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d("FragmentLifecycle", "Fragment loaded: " + this.getClass().getSimpleName());
+
+        // Initialize FirebaseAuth
         auth = FirebaseAuth.getInstance();
 
-        EditText emailInput = view.findViewById(R.id.inputEmail);
-        EditText passwordInput = view.findViewById(R.id.inputPassword);
+        // Set up the Login button click listener
+        binding.btnLogin.setOnClickListener(v -> {
+            String email = binding.inputEmail.getText().toString();
+            String password = binding.inputPassword.getText().toString();
 
-        view.findViewById(R.id.btnLogin).setOnClickListener(v -> {
-            String email = emailInput.getText().toString();
-            String password = passwordInput.getText().toString();
-
+            // Validate inputs
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
                 return;
@@ -58,9 +63,17 @@ public class LoginFragment extends Fragment {
                         });
             }
         });
-        view.findViewById(R.id.btnGoBack).setOnClickListener(v -> {
+
+        // Set up the Go Back button click listener
+        binding.btnGoBack.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(view);
             navController.navigateUp();
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // Prevent memory leaks
     }
 }
