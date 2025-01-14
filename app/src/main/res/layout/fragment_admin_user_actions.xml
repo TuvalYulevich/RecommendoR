@@ -10,7 +10,7 @@
         android:id="@+id/tvUserActionsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose an action for the user"
+        android:text="@string/Choose_Action"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp" />
@@ -26,28 +26,28 @@
             android:id="@+id/btnViewUserInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View User Information"
+            android:text="@string/View_User_Information"
             android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnEditDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Personal User Details"
+            android:text="@string/Edit_Personal_User_Details"
             android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnDeleteUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete User"
+            android:text="@string/Delete_User"
             android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnGoBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Go Back"
+            android:text="@string/Go_Back_Btn"
             android:layout_marginBottom="8dp" />
     </LinearLayout>
 </LinearLayout>

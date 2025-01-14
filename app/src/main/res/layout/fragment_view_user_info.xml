@@ -9,7 +9,7 @@
         android:id="@+id/tvUserInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="User Info"
+        android:text="@string/User_Info"
         android:textSize="18sp"
         android:padding="8dp" />
 
@@ -19,5 +19,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_gravity="center"
-        android:text="Go Back" />
+        android:text="@string/Go_Back_Btn" />
 </LinearLayout>

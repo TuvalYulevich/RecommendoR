@@ -1,5 +1,56 @@
 <resources>
     <string name="app_name">RecommendoR</string>
     <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Generic Buttons -->
+    <string name="Go_Back_Btn">Go Back</string>
+    <string name="Save_Btn">Save</string>
+    <string name="LogOut_Btn">Logout</string>
+
+    <!-- Welcome Fragment -->
+    <string name="Welcome">Welcome to RecommendoR!</string>
+
+    <!-- Login Fragment -->
+    <string name="Login_Email">Email</string>
+    <string name="Login_Password">Password</string>
+    <string name="Login_Btn">Login</string>
+
+    <!-- Register Fragment -->
+    <string name="Register_First_Name">First Name</string>
+    <string name="Register_Last_Name">Lase Name</string>
+    <string name="Register_Username">Username</string>
+    <string name="Register_Email">Email</string>
+    <string name="Register_Password">Password</string>
+    <string name="Register_Age">Age</string>
+    <string name="Register_Btn">Register</string>
+
+    <!-- Admin Edit User Personal Details Fragment-->
+    <string name="Edit_First_Name">First Name</string>
+    <string name="Edit_Last_Name">Last Name</string>
+    <string name="Edit_Username">Username</string>
+    <string name="Edit_Age">Age</string>
+    <string name="email_edit_note">Note: E-mail and password cannot be edited.</string>
+
+    <!-- Admin View User Personal Details Fragment-->
+    <string name="User_Info">User Info</string>
+
+
+    <!-- User Main Fragment -->
+    <string name="Logged_Successfully">You have successfully logged into RecommendoR!</string>
+
+    <!-- Admin Fragment-->
+    <string name="No_Users_Count1">No users available</string>
+    <string name="No_Users_Count2">Registered Users: 0</string>
+
+    <!-- AdminUserAction Fragment -->
+   <string name="Choose_Action">Choose an action for the user</string>
+   <string name="View_User_Information">View User Information</string>
+   <string name="Edit_Personal_User_Details">Edit Personal User Details</string>
+   <string name="Delete_User">Delete User</string>
+
+
+
 </resources>
