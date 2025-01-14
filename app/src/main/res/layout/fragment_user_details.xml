@@ -6,47 +6,79 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+<!-- First Name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Edit_First_Name"
+        android:textSize="14sp"
+        android:textStyle="bold" />
     <EditText
         android:id="@+id/etFirstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="First Name" />
+        android:hint="@string/Edit_First_Name" />
 
+<!-- Last Name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Edit_Last_Name"
+        android:textSize="14sp"
+        android:textStyle="bold" />
     <EditText
         android:id="@+id/etLastName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Last Name" />
+        android:hint="@string/Edit_Last_Name" />
 
+    <!-- Username -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Edit_Username"
+        android:textSize="14sp"
+        android:textStyle="bold" />
     <EditText
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username" />
+        android:hint="@string/Edit_Username" />
 
-    <EditText
-        android:id="@+id/etEmail"
+    <!-- Age -->
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email" />
-
+        android:text="@string/Edit_Age"
+        android:textSize="14sp"
+        android:textStyle="bold" />
     <EditText
-        android:id="@+id/etDateOfBirth"
+        android:id="@+id/etAge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Date of Birth" />
+        android:hint="@string/Edit_Age" />
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save" />
+        android:text="@string/Save_Btn" />
+
+    <TextView
+        android:id="@+id/tvEmailNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/email_edit_note"
+        android:textColor="#FF0000"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        android:gravity="center" />
 
     <Button
         android:id="@+id/btnGoBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go Back"
+        android:text="@string/Go_Back_Btn"
         android:layout_gravity="center"
         android:layout_marginTop="16dp" />
 </LinearLayout>

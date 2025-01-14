@@ -11,8 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-import com.example.recommendor.R;
-import com.example.recommendor.admin.AdminUserActionsFragmentArgs;
 import com.example.recommendor.databinding.FragmentUserDetailsBinding;
 import com.example.recommendor.models.UserModel;
 import com.example.recommendor.repositories.UserRepository;
@@ -51,8 +49,7 @@ public class UserDetailsFragment extends Fragment {
                 binding.etFirstName.setText(user.getFirstName());
                 binding.etLastName.setText(user.getLastName());
                 binding.etUsername.setText(user.getUsername());
-                binding.etEmail.setText(user.getEmail());
-                binding.etDateOfBirth.setText(user.getDateOfBirth());
+                binding.etAge.setText(user.getAge());
             } else {
                 Log.e("UserDetailsFragment", "Failed to fetch user details.");
             }
@@ -64,8 +61,7 @@ public class UserDetailsFragment extends Fragment {
             updatedUser.setFirstName(binding.etFirstName.getText().toString());
             updatedUser.setLastName(binding.etLastName.getText().toString());
             updatedUser.setUsername(binding.etUsername.getText().toString());
-            updatedUser.setEmail(binding.etEmail.getText().toString());
-            updatedUser.setDateOfBirth(binding.etDateOfBirth.getText().toString());
+            updatedUser.setAge(binding.etAge.getText().toString());
 
             userRepository.updateUser(userId, updatedUser, task -> {
                 if (task.isSuccessful()) {

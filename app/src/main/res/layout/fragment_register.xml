@@ -13,51 +13,51 @@
             android:id="@+id/inputFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First Name" />
+            android:hint="@string/Register_First_Name" />
 
         <EditText
             android:id="@+id/inputLastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Last Name" />
+            android:hint="@string/Register_Last_Name" />
 
         <EditText
             android:id="@+id/inputUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username" />
+            android:hint="@string/Register_Username" />
 
         <EditText
             android:id="@+id/inputEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email" />
+            android:hint="@string/Register_Email" />
 
         <EditText
             android:id="@+id/inputPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/Register_Password"
             android:inputType="textPassword" />
 
         <EditText
-            android:id="@+id/inputDateOfBirth"
+            android:id="@+id/inputAge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Date of Birth" />
+            android:hint="@string/Register_Age" />
 
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register"
+            android:text="@string/Register_Btn"
             android:layout_marginTop="16dp" />
 
         <Button
             android:id="@+id/btnGoBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Go Back"
+            android:text="@string/Go_Back_Btn"
             android:layout_gravity="center"
             android:layout_marginTop="16dp" />
     </LinearLayout>

@@ -13,9 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.example.recommendor.R;
 import com.example.recommendor.databinding.FragmentViewUserInfoBinding;
-import com.example.recommendor.models.UserModel;
 import com.example.recommendor.repositories.UserRepository;
 import com.example.recommendor.viewmodels.UserViewModel;
 
@@ -53,7 +51,8 @@ public class ViewUserInfoFragment extends Fragment {
                         "First Name: " + user.getFirstName() + "\n" +
                         "Last Name: " + user.getLastName() + "\n" +
                         "Email: " + user.getEmail() + "\n" +
-                        "Date of Birth: " + user.getDateOfBirth();
+                        "Password: " + user.getPassword() + "\n" +
+                        "Age: " + user.getAge();
                 binding.tvUserInfo.setText(userInfo);
             } else {
                 binding.tvUserInfo.setText("Failed to load user info.");

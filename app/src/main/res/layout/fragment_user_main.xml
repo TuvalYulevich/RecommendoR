@@ -11,7 +11,7 @@
         android:id="@+id/welcomeMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You have successfully logged into RecommendoR!"
+        android:text="@string/Logged_Successfully"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_gravity="center" />
@@ -20,7 +20,7 @@
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Log Out"
+        android:text="@string/LogOut_Btn"
         android:layout_gravity="center"
         android:layout_marginTop="20dp" />
 </LinearLayout>

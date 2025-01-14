@@ -50,6 +50,7 @@ public class RegisterFragment extends Fragment {
             String username = binding.inputUsername.getText().toString();
             String email = binding.inputEmail.getText().toString();
             String password = binding.inputPassword.getText().toString();
+            String age=binding.inputAge.getText().toString();
 
             // Validate inputs
             if (TextUtils.isEmpty(firstName) || TextUtils.isEmpty(lastName) || TextUtils.isEmpty(username)
@@ -73,11 +74,14 @@ public class RegisterFragment extends Fragment {
                                 newUser.setLastName(lastName);
                                 newUser.setUsername(username);
                                 newUser.setEmail(email);
+                                newUser.setPassword(password);
+                                newUser.setAge(age);
 
                                 userRepository.updateUser(userId, newUser, updateTask -> {
                                     if (updateTask.isSuccessful()) {
                                         NavController navController = Navigation.findNavController(view);
                                         navController.navigate(R.id.action_registerFragment_to_welcomeFragment);
+                                        Toast.makeText(requireContext(), "Registration completed.", Toast.LENGTH_SHORT).show();
                                     } else {
                                         Toast.makeText(requireContext(), "Error saving user info.", Toast.LENGTH_SHORT).show();
                                     }

@@ -6,7 +6,8 @@ public class UserModel {
     private String lastName;
     private String username;
     private String email;
-    private String dateOfBirth;
+    private String age;
+    private String password;
 
     // Required empty constructor
     public UserModel() {}
@@ -51,12 +52,15 @@ public class UserModel {
         this.email = email;
     }
 
-    public String getDateOfBirth() {
-        return dateOfBirth;
+    public String getPassword() {return password;}
+    public void setPassword(String password) {this.password=password;}
+
+    public String getAge() {
+        return age;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setAge(String age) {
+        this.age = age;
     }
 
     // Utility method for getting the full name
